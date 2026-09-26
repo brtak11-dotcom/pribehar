@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    >
+
+    <meta name="theme-color" content="#05080d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+    >
+
+    <title>Sabriela a Ondra | Ledová kronika</title>
+
+    <style>
+        :root {
+            --gold: #e3c174;
+            --light-gold: #fff0bd;
+            --paper: #f8eed9;
+            --dark: #05080d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: var(--dark);
+            color: white;
+            font-family: Georgia, "Times New Roman", serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            position: fixed;
+            inset: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        #chronicle {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(
+                    circle at 50% 42%,
+                    #263346 0%,
+                    #0b1119 48%,
+                    #030507 100%
+                );
+            touch-action: pan-y;
+        }
+
+        #sceneContainer,
+        .scene {
+            position: absolute;
+            inset: 0;
+        }
+
+        .scene {
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: scale(1.015);
+            transition:
+                opacity 1s ease,
+                visibility 1s ease,
+                transform 8s ease;
+        }
+
+        .scene.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: scale(1.055);
+        }
+
+        .scene.leaving {
+            opacity: 0;
+            transform: scale(1.09);
+        }
+
+        .background,
+        .main-image,
+        .moving-layer {
+            position: absolute;
+            inset: -3%;
+            width: 106%;
+            height: 106%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .background {
+            z-index: 0;
+            filter: blur(36px) brightness(0.32) saturate(1.15);
+            transform: scale(1.16);
+        }
+
+        .main-image {
+            z-index: 1;
+            animation: cameraMovement 14s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .moving-layer {
+            z-index: 2;
+            opacity: 0.88;
+            pointer-events: none;
+            will-change: transform, filter;
+        }
+
+        .effect-meadow .moving-layer {
+            clip-path: polygon(0 0, 100% 0, 100% 48%, 0 37%);
+            animation: movingSky 8s ease-in-out infinite alternate;
+        }
+
+        .effect-ice .moving-layer {
+            clip-path: polygon(0 0, 100% 0, 100% 73%, 0 63%);
+            animation: iceBreathing 4s ease-in-out infinite alternate;
+        }
+
+        .effect-letter .moving-layer {
+            clip-path: ellipse(38% 29% at 51% 45%);
+            animation: magicalLetter 3.2s ease-in-out infinite alternate;
+        }
+
+        .effect-glow .moving-layer {
+            clip-path: circle(29% at 52% 46%);
+            animation: warmGlow 2.7s ease-in-out infinite alternate;
+        }
+
+        .effect-storm .moving-layer {
+            clip-path: polygon(0 0, 100% 0, 100% 79%, 0 62%);
+            animation: stormMovement 2.7s ease-in-out infinite alternate;
+        }
+
+        .effect-embrace .moving-layer {
+            clip-path: ellipse(42% 39% at 52% 49%);
+            animation: embraceGlow 3s ease-in-out infinite alternate;
+        }
+
+        .effect-home .moving-layer,
+        .effect-celebration .moving-layer {
+            clip-path: polygon(0 0, 100% 0, 100% 55%, 0 64%);
+            animation: sunsetMovement 7s ease-in-out infinite alternate;
+        }
+
+        .color-grade {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.15;
+            mix-blend-mode: color;
+        }
+
+        .effect-meadow .color-grade,
+        .effect-home .color-grade,
+        .effect-celebration .color-grade {
+            background:
+                linear-gradient(
+                    145deg,
+                    #e8ad5e,
+                    transparent 45%,
+                    #233e5a
+                );
+        }
+
+        .effect-ice .color-grade,
+        .effect-storm .color-grade,
+        .effect-embrace .color-grade {
+            background:
+                linear-gradient(
+                    145deg,
+                    #7acffc,
+                    transparent 48%,
+                    #10243f
+                );
+        }
+
+        .effect-letter .color-grade,
+        .effect-glow .color-grade {
+            background:
+                radial-gradient(
+                    circle at 50% 45%,
+                    #ffe09b,
+                    transparent 42%
+                );
+        }
+
+        .particles {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            left: var(--x);
+            top: -8%;
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            opacity: var(--opacity);
+            background: var(--color);
+            box-shadow: 0 0 var(--glow) var(--color);
+            animation: particleFall var(--duration) linear infinite;
+            animation-delay: var(--delay);
+        }
+
+        .wind-line {
+            position: absolute;
+            left: -35%;
+            top: var(--y);
+            width: 34%;
+            height: 2px;
+            border-radius: 999px;
+            opacity: 0.65;
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(224, 246, 255, 0.72),
+                    transparent
+                );
+            filter: blur(1px);
+            transform: rotate(-12deg);
+            animation: windSweep var(--duration) linear infinite;
+            animation-delay: var(--delay);
+        }
+
+        .vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 42%,
+                    rgba(0, 0, 0, 0.24) 72%,
+                    rgba(0, 0, 0, 0.72) 100%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(0, 0, 0, 0.06) 25%,
+                    rgba(0, 0, 0, 0.14) 55%,
+                    rgba(2, 5, 10, 0.9) 100%
+                );
+        }
+
+        .grain {
+            position: absolute;
+            inset: -50%;
+            z-index: 6;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
+            animation: grainMovement 0.4s steps(2) infinite;
+        }
+
+        .story {
+            position: absolute;
+            z-index: 8;
+            left: max(23px, env(safe-area-inset-left));
+            right: max(23px, env(safe-area-inset-right));
+            bottom:
+                max(
+                    48px,
+                    calc(env(safe-area-inset-bottom) + 28px)
+                );
+            max-width: 760px;
+            text-shadow:
+                0 3px 17px rgba(0, 0, 0, 0.98),
+                0 1px 4px rgba(0, 0, 0, 0.95);
+            transition:
+                opacity 0.4s ease,
+                transform 0.4s ease;
+        }
+
+        .story.hidden {
+            opacity: 0;
+            transform: translateY(24px);
+            pointer-events: none;
+        }
+
+        .scene-number {
+            margin-bottom: 9px;
+            color: var(--light-gold);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.23em;
+            text-transform: uppercase;
+        }
+
+        .ornament {
+            width: 94px;
+            height: 1px;
+            margin-bottom: 15px;
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--gold),
+                    transparent
+                );
+            box-shadow:
+                0 0 8px rgba(229, 196, 123, 0.48);
+        }
+
+        .story h1 {
+            margin: 0 0 12px;
+            color: #fff5dd;
+            font-size: clamp(34px, 8.5vw, 67px);
+            font-weight: normal;
+            line-height: 0.98;
+            letter-spacing: -0.035em;
+        }
+
+        .story p {
+            max-width: 680px;
+            margin: 0;
+            color: #f7eedc;
+            font-size: clamp(16px, 4.2vw, 23px);
+            line-height: 1.47;
+        }
+
+        .interface {
+            position: absolute;
+            inset: 0;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .click-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 36%;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        #previousButton {
+            left: 0;
+        }
+
+        #nextButton {
+            right: 0;
+        }
+
+        .toolbar {
+            position: absolute;
+            top: max(17px, env(safe-area-inset-top));
+            right: max(15px, env(safe-area-inset-right));
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+        }
+
+        .toolbar button {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.34);
+            border-radius: 50%;
+            color: white;
+            background:
+                rgba(7, 12, 20, 0.5);
+            box-shadow:
+                0 5px 18px
+                rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background:
+                rgba(229, 196, 123, 0.28);
+        }
+
+        .progress {
+            position: absolute;
+            left: max(18px, env(safe-area-inset-left));
+            right: max(18px, env(safe-area-inset-right));
+            bottom: max(13px, env(safe-area-inset-bottom));
+            height: 3px;
+            overflow: hidden;
+            border-radius: 999px;
+            background:
+                rgba(255, 255, 255, 0.22);
+        }
+
+        #progressBar {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background:
+                linear-gradient(
+                    90deg,
+                    #c69545,
+                    #ffe8af
+                );
+            box-shadow:
+                0 0 10px
+                rgba(255, 222, 154, 0.5);
+            transition: width 0.55s ease;
+        }
+
+        #pageTransition {
+            position: absolute;
+            inset: 0;
+            z-index: 12;
+            pointer-events: none;
+            perspective: 1600px;
+        }
+
+        .turning-page {
+            position: absolute;
+            inset: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(4, 8, 13, 0.14),
+                    rgba(255, 240, 198, 0.25),
+                    rgba(4, 8, 13, 0.72)
+                );
+            box-shadow:
+                24px 0 55px
+                rgba(0, 0, 0, 0.48);
+            animation:
+                pageTurn 0.82s
+                cubic-bezier(0.39, 0.03, 0.2, 1)
+                both;
+        }
+
+        #loadingScreen {
+            position: absolute;
+            inset: 0;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            color: var(--paper);
+            background:
+                radial-gradient(
+                    circle at center,
+                    #263448,
+                    #070a0f 70%
+                );
+            text-align: center;
+            transition:
+                opacity 0.7s ease,
+                visibility 0.7s ease;
+        }
+
+        #loadingScreen.finished {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loadingScreen strong {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--light-gold);
+            font-size: 28px;
+            font-weight: normal;
+        }
+
+        #loadingMessage {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.85;
+        }
+
+        @keyframes cameraMovement {
+            from {
+                transform:
+                    scale(1.01)
+                    translate(-0.25%, 0.15%);
+            }
+
+            to {
+                transform:
+                    scale(1.068)
+                    translate(0.4%, -0.3%);
+            }
+        }
+
+        @keyframes movingSky {
+            to {
+                transform:
+                    translate(0.8%, -0.55%)
+                    scale(1.02);
+                filter:
+                    brightness(1.12)
+                    saturate(1.06);
+            }
+        }
+
+        @keyframes iceBreathing {
+            to {
+                transform:
+                    translate(0.4%, -0.45%)
+                    scale(1.018);
+                filter:
+                    brightness(1.28)
+                    saturate(1.16);
+            }
+        }
+
+        @keyframes magicalLetter {
+            to {
+                transform:
+                    translate(10px, -8px)
+                    rotate(0.7deg)
+                    scale(1.02);
+                filter:
+                    brightness(1.42)
+                    saturate(1.18);
+            }
+        }
+
+        @keyframes warmGlow {
+            to {
+                transform: scale(1.03);
+                filter:
+                    brightness(1.5)
+                    saturate(1.2);
+            }
+        }
+
+        @keyframes stormMovement {
+            to {
+                transform:
+                    translate(1.1%, -0.5%)
+                    scale(1.035);
+                filter: brightness(1.12);
+            }
+        }
+
+        @keyframes embraceGlow {
+            to {
+                transform: scale(1.03);
+                filter:
+                    brightness(1.38)
+                    saturate(1.2);
+            }
+        }
+
+        @keyframes sunsetMovement {
+            to {
+                transform:
+                    translate(0.55%, -0.5%)
+                    scale(1.022);
+                filter:
+                    brightness(1.18)
+                    saturate(1.14);
+            }
+        }
+
+        @keyframes particleFall {
+            to {
+                transform:
+                    translate(
+                        var(--drift),
+                        114vh
+                    )
+                    rotate(420deg);
+            }
+        }
+
+        @keyframes windSweep {
+            to {
+                transform:
+                    translateX(525%)
+                    rotate(-12deg);
+            }
+        }
+
+        @keyframes pageTurn {
+            0% {
+                opacity: 0;
+                transform: rotateY(0deg);
+            }
+
+            18% {
+                opacity: 0.85;
+            }
+
+            100% {
+                opacity: 0;
+                transform: rotateY(-108deg);
+            }
+        }
+
+        @keyframes grainMovement {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-2%, 1%);
+            }
+
+            50% {
+                transform: translate(1%, -2%);
+            }
+
+            75% {
+                transform: translate(2%, 2%);
+            }
+
+            100% {
+                transform: translate(-1%, -1%);
+            }
+        }
+
+        @media (min-width: 850px) {
+            .main-image,
+            .moving-layer {
+                object-fit: contain;
+            }
+
+            .story {
+                left: 7vw;
+                bottom: 7vh;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .main-image,
+            .moving-layer,
+            .particle,
+            .wind-line,
+            .turning-page,
+            .grain {
+                animation: none !important;
+            }
+
+            .scene {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main id="chronicle">
+
+    <div id="sceneContainer"></div>
+
+    <div id="pageTransition"></div>
+
+    <div id="loadingScreen">
+        <div>
+            <strong>Ledová kronika</strong>
+
+            <div id="loadingMessage">
+                Otevírám stránky dávného příběhu…
+            </div>
+        </div>
+    </div>
+
+    <div class="interface">
+
+        <button
+            id="previousButton"
+            class="click-zone"
+            aria-label="Předchozí obraz"
+        ></button>
+
+        <button
+            id="nextButton"
+            class="click-zone"
+            aria-label="Další obraz"
+        ></button>
+
+        <div class="toolbar">
+
+            <button
+                id="textButton"
+                type="button"
+                aria-label="Skrýt nebo zobrazit text"
+                title="Skrýt nebo zobrazit text"
+            >
+                Aa
+            </button>
+
+            <button
+                id="playButton"
+                type="button"
+                aria-label="Automatické přehrávání"
+                title="Automatické přehrávání"
+            >
+                ▶
+            </button>
+
+            <button
+                id="fullscreenButton"
+                type="button"
+                aria-label="Celá obrazovka"
+                title="Celá obrazovka"
+            >
+                ⛶
+            </button>
+
+        </div>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    /*
+    Obrázky musí být ve stejné složce jako index.html.
+
+    Kód automaticky zkouší:
+    .JPG
+    .jpg
+    .JPEG
+    .jpeg
+    .PNG
+    .png
+
+    Pokud máš jen osm obrázků, zbývající dvě scény
+    se automaticky přeskočí.
+    */
+
+    const requestedScenes = [
+        {
+            file: "01_kralovstvi",
+            title: "Království v údolí",
+            text:
+                "V údolí sevřeném vysokými štíty leželo maličké království princezny Sabriely. Tráva tam byla zelenější než smaragd a na loukách se pokojně pásly krávy.",
+            effect: "meadow"
+        },
+
+        {
+            file: "02_ledova_bariera",
+            title: "Ledová bariéra",
+            text:
+                "Jednoho dne království obklopila neproniknutelná ledová hradba. Sabriela však věřila, že opravdová láska dokáže otevřít tajnou cestu.",
+            effect: "ice"
+        },
+
+        {
+            file: "03_dopis",
+            title: "Vzkaz po horském větru",
+            text:
+                "Za soumraku svěřila Sabriela horskému větru zapečetěný dopis. Vítr jej zvedl nad ledovec a odnesl daleko za horské vrcholy.",
+            effect: "letter"
+        },
+
+        {
+            file: "04_ondra_okno",
+            title: "Dopis u Ondrova okna",
+            text:
+                "V jiném království spatřil princ Ondra z okna zářící dopis, který k němu připlouval horským větrem.",
+            effect: "letter"
+        },
+
+        {
+            file: "05_volani_lasky",
+            title: "Volání pravé lásky",
+            text:
+                "Ondra dopis otevřel a v jediném okamžiku věděl, že za ledovcem na něj čeká někdo, koho musí najít.",
+            effect: "glow"
+        },
+
+        {
+            file: "06_cesta",
+            title: "Cesta do průsmyku",
+            text:
+                "Sabriela i Ondra vyrazili každý ze svého království. Proti větru a sněhu hledali tajnou stezku ukrytou v ledovci.",
+            effect: "storm"
+        },
+
+        {
+            file: "07_troll",
+            title: "Sněžný troll",
+            text:
+                "Sabrielu na úzké stezce zastavil obrovský sněžný troll. Princezna se však nezalekla a odhodlaně bránila svou cestu.",
+            effect: "storm"
+        },
+
+        {
+            file: "08_setkani",
+            title: "Setkání v ledovci",
+            text:
+                "Uprostřed vichřice se Sabriela a Ondra konečně našli. Když se objali, ledová stezka se rozzářila teplým světlem.",
+            effect: "embrace"
+        },
+
+        {
+            file: "09_navrat",
+            title: "Návrat domů",
+            text:
+                "Společně vyšli z ledovce do zeleného údolí. Království je vítalo a ledová bariéra začala ustupovat.",
+            effect: "home"
+        },
+
+        {
+            file: "10_svatba",
+            title: "Velkolepá svatba",
+            text:
+                "Při západu slunce se celé maličké království sešlo na svatbě Sabriely a Ondry. Tajná stezka už nikdy nezamrzla.",
+            effect: "celebration"
+        }
+    ];
+
+    const possibleExtensions = [
+        ".JPG",
+        ".jpg",
+        ".JPEG",
+        ".jpeg",
+        ".PNG",
+        ".png"
+    ];
+
+    const sceneContainer =
+        document.getElementById("sceneContainer");
+
+    const pageTransition =
+        document.getElementById("pageTransition");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const loadingScreen =
+        document.getElementById("loadingScreen");
+
+    const loadingMessage =
+        document.getElementById("loadingMessage");
+
+    const previousButton =
+        document.getElementById("previousButton");
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+    const textButton =
+        document.getElementById("textButton");
+
+    const playButton =
+        document.getElementById("playButton");
+
+    const fullscreenButton =
+        document.getElementById("fullscreenButton");
+
+    let scenes = [];
+    let sceneElements = [];
+    let currentScene = 0;
+    let transitionRunning = false;
+    let textVisible = true;
+    let automaticPlayback = false;
+    let automaticTimer = null;
+    let touchStartX = 0;
+
+    function locateImage(baseName) {
+        return new Promise(function (resolve) {
+            let extensionIndex = 0;
+
+            function tryNextExtension() {
+                if (
+                    extensionIndex >=
+                    possibleExtensions.length
+                ) {
+                    resolve(null);
+                    return;
+                }
+
+                const fileName =
+                    baseName +
+                    possibleExtensions[extensionIndex];
+
+                extensionIndex++;
+
+                const tester = new Image();
+
+                tester.onload = function () {
+                    resolve(fileName);
+                };
+
+                tester.onerror =
+                    tryNextExtension;
+
+                tester.src = fileName;
+            }
+
+            tryNextExtension();
+        });
+    }
+
+    function createParticles(
+        container,
+        effect
+    ) {
+        const coldEffects = [
+            "ice",
+            "storm",
+            "embrace"
+        ];
+
+        const magicalEffects = [
+            "letter",
+            "glow",
+            "home",
+            "celebration"
+        ];
+
+        const isCold =
+            coldEffects.includes(effect);
+
+        const isMagical =
+            magicalEffects.includes(effect);
+
+        const particleCount =
+            effect === "storm"
+                ? 58
+                : isCold
+                    ? 40
+                    : isMagical
+                        ? 25
+                        : 15;
+
+        for (
+            let index = 0;
+            index < particleCount;
+            index++
+        ) {
+            const particle =
+                document.createElement("i");
+
+            particle.className = "particle";
+
+            const size =
+                isCold
+                    ? 2 + Math.random() * 5
+                    : 2 + Math.random() * 4;
+
+            const color =
+                isCold
+                    ? "#f5fbff"
+                    : "#ffe29a";
+
+            particle.style.setProperty(
+                "--x",
+                Math.random() * 105 + "%"
+            );
+
+            particle.style.setProperty(
+                "--size",
+                size + "px"
+            );
+
+            particle.style.setProperty(
+                "--opacity",
+                0.25 + Math.random() * 0.65
+            );
+
+            particle.style.setProperty(
+                "--color",
+                color
+            );
+
+            particle.style.setProperty(
+                "--glow",
+                isCold
+                    ? "3px"
+                    : "10px"
+            );
+
+            particle.style.setProperty(
+                "--duration",
+                (
+                    4 +
+                    Math.random() * 7
+                ) + "s"
+            );
+
+            particle.style.setProperty(
+                "--delay",
+                (
+                    -Math.random() * 8
+                ) + "s"
+            );
+
+            const drift =
+                effect === "storm"
+                    ? 90 + Math.random() * 170
+                    : -40 + Math.random() * 80;
+
+            particle.style.setProperty(
+                "--drift",
+                drift + "px"
+            );
+
+            container.appendChild(particle);
+        }
+
+        if (
+            effect === "storm" ||
+            effect === "ice" ||
+            effect === "letter"
+        ) {
+            for (
+                let index = 0;
+                index < 11;
+                index++
+            ) {
+                const wind =
+                    document.createElement("i");
+
+                wind.className = "wind-line";
+
+                wind.style.setProperty(
+                    "--y",
+                    (
+                        6 +
+                        index * 9
+                    ) + "%"
+                );
+
+                wind.style.setProperty(
+                    "--duration",
+                    (
+                        2.3 +
+                        Math.random() * 2.2
+                    ) + "s"
+                );
+
+                wind.style.setProperty(
+                    "--delay",
+                    (
+                        -Math.random() * 5
+                    ) + "s"
+                );
+
+                container.appendChild(wind);
+            }
+        }
+    }
+
+    function createScene(
+        sceneData,
+        sceneIndex
+    ) {
+        const scene =
+            document.createElement("section");
+
+        scene.className =
+            "scene effect-" +
+            sceneData.effect;
+
+        if (sceneIndex === 0) {
+            scene.classList.add("active");
+        }
+
+        const background =
+            document.createElement("img");
+
+        background.className = "background";
+        background.src = sceneData.image;
+        background.alt = "";
+
+        const mainImage =
+            document.createElement("img");
+
+        mainImage.className = "main-image";
+        mainImage.src = sceneData.image;
+        mainImage.alt = sceneData.title;
+
+        const movingLayer =
+            document.createElement("img");
+
+        movingLayer.className = "moving-layer";
+        movingLayer.src = sceneData.image;
+        movingLayer.alt = "";
+        movingLayer.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        const colorGrade =
+            document.createElement("div");
+
+        colorGrade.className = "color-grade";
+
+        const particles =
+            document.createElement("div");
+
+        particles.className = "particles";
+
+        const vignette =
+            document.createElement("div");
+
+        vignette.className = "vignette";
+
+        const grain =
+            document.createElement("div");
+
+        grain.className = "grain";
+
+        const story =
+            document.createElement("article");
+
+        story.className = "story";
+
+        story.innerHTML = `
+            <div class="scene-number">
+                Ledová kronika · Obraz
+                ${String(sceneIndex + 1).padStart(2, "0")}
+                /
+                ${String(scenes.length).padStart(2, "0")}
+            </div>
+
+            <div class="ornament"></div>
+
+            <h1>${sceneData.title}</h1>
+
+            <p>${sceneData.text}</p>
+        `;
+
+        scene.appendChild(background);
+        scene.appendChild(mainImage);
+        scene.appendChild(movingLayer);
+        scene.appendChild(colorGrade);
+        scene.appendChild(particles);
+        scene.appendChild(vignette);
+        scene.appendChild(grain);
+        scene.appendChild(story);
+
+        createParticles(
+            particles,
+            sceneData.effect
+        );
+
+        return scene;
+    }
+
+    function updateProgress() {
+        if (scenes.length === 0) {
+            progressBar.style.width = "0%";
+            return;
+        }
+
+        const progress =
+            (
+                (
+                    currentScene + 1
+                ) /
+                scenes.length
+            ) *
+            100;
+
+        progressBar.style.width =
+            progress + "%";
+    }
+
+    function createPageTransition(
+        direction
+    ) {
+        const page =
+            document.createElement("div");
+
+        page.className = "turning-page";
+
+        page.style.transformOrigin =
+            direction > 0
+                ? "left center"
+                : "right center";
+
+        pageTransition.appendChild(page);
+
+        window.setTimeout(
+            function () {
+                page.remove();
+            },
+            900
+        );
+    }
+
+    function showScene(
+        requestedIndex,
+        direction = 1
+    ) {
+        if (
+            transitionRunning ||
+            sceneElements.length === 0
+        ) {
+            return;
+        }
+
+        transitionRunning = true;
+
+        const newIndex =
+            (
+                requestedIndex +
+                scenes.length
+            ) %
+            scenes.length;
+
+        const currentElement =
+            sceneElements[currentScene];
+
+        const newElement =
+            sceneElements[newIndex];
+
+        createPageTransition(direction);
+
+        newElement.classList.add("active");
+
+        newElement
+            .querySelector(".story")
+            .classList.toggle(
+                "hidden",
+                !textVisible
+            );
+
+        currentElement.classList.add("leaving");
+
+        window.setTimeout(
+            function () {
+                currentElement.classList.remove(
+                    "active",
+                    "leaving"
+                );
+
+                currentScene = newIndex;
+
+                updateProgress();
+
+                transitionRunning = false;
+            },
+            830
+        );
+    }
+
+    function stopAutomaticPlayback() {
+        automaticPlayback = false;
+
+        window.clearInterval(
+            automaticTimer
+        );
+
+        playButton.textContent = "▶";
+    }
+
+    function nextScene() {
+        stopAutomaticPlayback();
+
+        showScene(
+            currentScene + 1,
+            1
+        );
+    }
+
+    function previousScene() {
+        stopAutomaticPlayback();
+
+        showScene(
+            currentScene - 1,
+            -1
+        );
+    }
+
+    async function initialiseChronicle() {
+        loadingMessage.textContent =
+            "Hledám ilustrace ve stejné složce jako index.html…";
+
+        const foundScenes = [];
+
+        for (
+            const requestedScene of
+            requestedScenes
+        ) {
+            const locatedFile =
+                await locateImage(
+                    requestedScene.file
+                );
+
+            if (locatedFile) {
+                foundScenes.push({
+                    ...requestedScene,
+                    image: locatedFile
+                });
+            }
+        }
+
+        scenes = foundScenes;
+
+        if (scenes.length === 0) {
+            loadingMessage.innerHTML = `
+                Nepodařilo se najít žádný obrázek.
+                <br><br>
+                Obrázky musí být ve stejné složce
+                jako <strong>index.html</strong>.
+                <br><br>
+                První soubor pojmenuj například:
+                <br>
+                <strong>01_kralovstvi.JPG</strong>
+            `;
+
+            return;
+        }
+
+        scenes.forEach(
+            function (
+                sceneData,
+                sceneIndex
+            ) {
+                sceneContainer.appendChild(
+                    createScene(
+                        sceneData,
+                        sceneIndex
+                    )
+                );
+            }
+        );
+
+        sceneElements =
+            Array.from(
+                document.querySelectorAll(".scene")
+            );
+
+        updateProgress();
+
+        loadingScreen.classList.add("finished");
+    }
+
+    previousButton.addEventListener(
+        "click",
+        previousScene
+    );
+
+    nextButton.addEventListener(
+        "click",
+        nextScene
+    );
+
+    textButton.addEventListener(
+        "click",
+        function () {
+            textVisible = !textVisible;
+
+            sceneElements.forEach(
+                function (scene) {
+                    scene
+                        .querySelector(".story")
+                        .classList.toggle(
+                            "hidden",
+                            !textVisible
+                        );
+                }
+            );
+        }
+    );
+
+    playButton.addEventListener(
+        "click",
+        function () {
+            if (automaticPlayback) {
+                stopAutomaticPlayback();
+                return;
+            }
+
+            automaticPlayback = true;
+
+            playButton.textContent = "Ⅱ";
+
+            automaticTimer =
+                window.setInterval(
+                    function () {
+                        showScene(
+                            currentScene + 1,
+                            1
+                        );
+                    },
+                    8500
+                );
+        }
+    );
+
+    fullscreenButton.addEventListener(
+        "click",
+        function () {
+            if (!document.fullscreenElement) {
+                document.documentElement
+                    .requestFullscreen?.();
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+            if (event.key === "ArrowRight") {
+                nextScene();
+            }
+
+            if (event.key === "ArrowLeft") {
+                previousScene();
+            }
+
+            if (event.key === " ") {
+                event.preventDefault();
+                playButton.click();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "touchstart",
+        function (event) {
+            touchStartX =
+                event.changedTouches[0].clientX;
+        },
+        {
+            passive: true
+        }
+    );
+
+    document.addEventListener(
+        "touchend",
+        function (event) {
+            const touchEndX =
+                event.changedTouches[0].clientX;
+
+            const difference =
+                touchEndX -
+                touchStartX;
+
+            if (
+                Math.abs(difference) < 55
+            ) {
+                return;
+            }
+
+            if (difference < 0) {
+                nextScene();
+            } else {
+                previousScene();
+            }
+        },
+        {
+            passive: true
+        }
+    );
+
+    initialiseChronicle();
+</script>
+
+</body>
+</html>
