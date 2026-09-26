@@ -1,1 +1,461 @@
+<!DOCTYPE html>
+
+
+    
+
+    
+
+    
+    
+    
+
+    Sabriela a Ondra | Ledová kronika
+
+    
+        :root {
+            --gold: #e5c47b;
+            --gold-light: #fff0bd;
+            --paper: #f4ead5;
+            --dark: #080a0f;
+            --transition-time: 1000ms;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: var(--dark);
+            color: white;
+            font-family: Georgia, "Times New Roman", serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            position: fixed;
+            inset: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        /*
+        ============================================================
+        HLAVNÍ KONTEJNER
+        ============================================================
+        */
+
+        #chronicle {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(
+                    circle at center,
+                    #243044 0%,
+                    #0b1018 58%,
+                    #030508 100%
+                );
+            touch-action: pan-y;
+        }
+
+        #sceneContainer,
+        .scene {
+            position: absolute;
+            inset: 0;
+        }
+
+        /*
+        ============================================================
+        JEDNOTLIVÉ SCÉNY
+        ============================================================
+        */
+
+        .scene {
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            pointer-events: none;
+            transform: scale(1.015);
+            transition:
+                opacity var(--transition-time) ease,
+                visibility var(--transition-time) ease,
+                transform 8s ease;
+        }
+
+        .scene.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: scale(1.055);
+        }
+
+        .scene.leaving {
+            opacity: 0;
+            transform: scale(1.09);
+        }
+
+        .scene-background,
+        .scene-image,
+        .moving-layer {
+            position: absolute;
+            inset: -3%;
+            width: 106%;
+            height: 106%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .scene-background {
+            filter: blur(35px) brightness(0.32) saturate(1.15);
+            transform: scale(1.16);
+        }
+
+        .scene-image {
+            z-index: 1;
+            animation: cameraMovement 14s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        /*
+        Druhá kopie stejného obrázku.
+        Maska zobrazuje jen část obrazu, která se jemně pohybuje.
+        */
+
+        .moving-layer {
+            z-index: 2;
+            opacity: 0.88;
+            pointer-events: none;
+            will-change: transform, filter;
+        }
+
+        .effect-meadow .moving-layer {
+            clip-path: polygon(
+                0% 0%,
+                100% 0%,
+                100% 48%,
+                0% 38%
+            );
+
+            animation:
+                movingSky 8s ease-in-out infinite alternate;
+        }
+
+        .effect-ice .moving-layer {
+            clip-path: polygon(
+                0% 0%,
+                100% 0%,
+                100% 72%,
+                0% 64%
+            );
+
+            animation:
+                iceBreathing 4s ease-in-out infinite alternate;
+        }
+
+        .effect-letter .moving-layer {
+            clip-path: ellipse(
+                38% 28% at 51% 45%
+            );
+
+            animation:
+                magicalLetter 3.2s ease-in-out infinite alternate;
+        }
+
+        .effect-glow .moving-layer {
+            clip-path: circle(
+                29% at 52% 46%
+            );
+
+            animation:
+                warmGlow 2.7s ease-in-out infinite alternate;
+        }
+
+        .effect-storm .moving-layer {
+            clip-path: polygon(
+                0% 0%,
+                100% 0%,
+                100% 78%,
+                0% 63%
+            );
+
+            animation:
+                stormMovement 2.8s ease-in-out infinite alternate;
+        }
+
+        .effect-embrace .moving-layer {
+            clip-path: ellipse(
+                42% 39% at 52% 49%
+            );
+
+            animation:
+                embraceGlow 3s ease-in-out infinite alternate;
+        }
+
+        .effect-home .moving-layer,
+        .effect-celebration .moving-layer {
+            clip-path: polygon(
+                0% 0%,
+                100% 0%,
+                100% 54%,
+                0% 64%
+            );
+
+            animation:
+                sunsetMovement 7s ease-in-out infinite alternate;
+        }
+
+        /*
+        ============================================================
+        PŘEKRYVY A ATMOSFÉRA
+        ============================================================
+        */
+
+        .color-grade {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            mix-blend-mode: color;
+            opacity: 0.16;
+        }
+
+        .effect-meadow .color-grade,
+        .effect-home .color-grade,
+        .effect-celebration .color-grade {
+            background: linear-gradient(
+                145deg,
+                #e9af61,
+                transparent 45%,
+                #243d58
+            );
+        }
+
+        .effect-ice .color-grade,
+        .effect-storm .color-grade,
+        .effect-embrace .color-grade {
+            background: linear-gradient(
+                145deg,
+                #75c7ef,
+                transparent 48%,
+                #10233d
+            );
+        }
+
+        .effect-letter .color-grade,
+        .effect-glow .color-grade {
+            background: radial-gradient(
+                circle at 50% 45%,
+                #ffe2a0,
+                transparent 40%
+            );
+        }
+
+        .vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 42%,
+                    rgba(0, 0, 0, 0.25) 72%,
+                    rgba(0, 0, 0, 0.7) 100%
+                ),
+                linear-gradient(
+                    180deg,
+                    rgba(0, 0, 0, 0.08) 20%,
+                    rgba(0, 0, 0, 0.12) 53%,
+                    rgba(2, 5, 10, 0.9) 100%
+                );
+        }
+
+        .film-grain {
+            position: absolute;
+            inset: -50%;
+            z-index: 6;
+            pointer-events: none;
+            opacity: 0.045;
+
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
+
+            animation: grain 0.35s steps(2) infinite;
+        }
+
+        /*
+        ============================================================
+        ČÁSTICOVÉ EFEKTY
+        ============================================================
+        */
+
+        .particles {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            left: var(--x);
+            top: -8%;
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            opacity: var(--opacity);
+            background: var(--color);
+            box-shadow:
+                0 0 var(--glow) var(--color);
+
+            animation:
+                particleFall var(--duration) linear infinite;
+
+            animation-delay: var(--delay);
+        }
+
+        .wind-line {
+            position: absolute;
+            left: -35%;
+            top: var(--y);
+            width: 33%;
+            height: 2px;
+            border-radius: 999px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(220, 244, 255, 0.62),
+                    transparent
+                );
+
+            filter: blur(1px);
+            transform: rotate(-12deg);
+
+            animation:
+                windSweep var(--duration) linear infinite;
+
+            animation-delay: var(--delay);
+        }
+
+        /*
+        ============================================================
+        TEXT KRONIKY
+        ============================================================
+        */
+
+        .story {
+            position: absolute;
+            z-index: 8;
+
+            left: max(23px, env(safe-area-inset-left));
+            right: max(23px, env(safe-area-inset-right));
+
+            bottom:
+                max(
+                    48px,
+                    calc(env(safe-area-inset-bottom) + 28px)
+                );
+
+            max-width: 760px;
+
+            text-shadow:
+                0 3px 16px rgba(0, 0, 0, 0.95),
+                0 1px 3px rgba(0, 0, 0, 0.9);
+
+            transition:
+                opacity 0.4s ease,
+                transform 0.4s ease;
+        }
+
+        .story.hidden {
+            opacity: 0;
+            transform: translateY(24px);
+            pointer-events: none;
+        }
+
+        .scene-number {
+            margin-bottom: 9px;
+
+            color: var(--gold-light);
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.23em;
+            text-transform: uppercase;
+        }
+
+        .story h1 {
+            margin: 0 0 12px;
+
+            color: #fff5dd;
+
+            font-size:
+                clamp(
+                    33px,
+                    8.5vw,
+                    67px
+                );
+
+            font-weight: normal;
+            line-height: 0.98;
+            letter-spacing: -0.035em;
+        }
+
+        .story p {
+            margin: 0;
+
+            max-width: 680px;
+
+            color: #f7eedc;
+
+            font-size:
+                clamp(
+                    16px,
+                    4.2vw,
+                    23px
+                );
+
+            line-height: 1.47;
+        }
+
+        .ornament {
+            width: 92px;
+            height: 1px;
+            margin: 0 0 15px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--gold),
+                    transparent
+                );
+
+            box-shadow:
+                0 0 8px rgba(229, 196, 123, 0.45);
+        }
+
+        /*
+        =================================================
 
