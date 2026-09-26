@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sabriela a Ondra</title>
+
+<style>
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:black;
+}
+
+#viewer{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+}
+
+.slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transition:opacity 1.5s ease;
+}
+
+.slide.active{
+    opacity:1;
+}
+
+.slide img{
+    position:absolute;
+    width:110%;
+    height:110%;
+    left:-5%;
+    top:-5%;
+    object-fit:cover;
+
+    animation:zoom 12s ease-in-out infinite alternate;
+}
+
+.caption{
+    position:absolute;
+    left:30px;
+    right:30px;
+    bottom:40px;
+
+    color:white;
+    font-family:Georgia,serif;
+
+    text-shadow:0 2px 10px black;
+}
+
+.caption h1{
+    margin:0;
+    font-size:50px;
+}
+
+.caption p{
+    margin-top:8px;
+    font-size:22px;
+}
+
+button{
+    position:fixed;
+    top:20px;
+    z-index:999;
+
+    border:none;
+    padding:12px 20px;
+
+    font-size:20px;
+    cursor:pointer;
+}
+
+#prev{
+    left:20px;
+}
+
+#next{
+    right:20px;
+}
+
+@keyframes zoom{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.08);
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div id="viewer"></div>
+
+<button id="prev">◀</button>
+<button id="next">▶</button>
+
+<script>
+
+const scenes = [
+
+{
+image:"01_kralovstvi.jpg",
+title:"Království v údolí",
+text:"Malé království princezny Sabriely."
+},
+
+{
+image:"02_ledova_bariera.jpg",
+title:"Ledová bariéra",
+text:"Království obklopil neprostupný led."
+},
+
+{
+image:"03_dopis.jpg",
+title:"Horský vítr",
+text:"Sabriela posílá dopis své budoucí lásce."
+},
+
+{
+image:"04_ondra_okno.jpg",
+title:"Princ Ondra",
+text:"Ondra spatří dopis z hor."
+},
+
+{
+image:"05_volani_lasky.jpg",
+title:"Volání",
+text:"Ondra vyráží hledat Sabrielu."
+},
+
+{
+image:"06_cesta.jpg",
+title:"Ledová stezka",
+text:"Oba vstupují do průsmyku."
+},
+
+{
+image:"07_troll.jpg",
+title:"Sněžný troll",
+text:"Sabriela musí bojovat."
+},
+
+{
+image:"08_setkani.jpg",
+title:"Shledání",
+text:"Konečně se našli."
+}
+
+];
+
+let current = 0;
+
+const viewer = document.getElementById("viewer");
+
+function showSlide(index){
+
+viewer.innerHTML="";
+
+const s = scenes[index];
+
+const slide = document.createElement("div");
+slide.className="slide active";
+
+slide.innerHTML=
+`
+<img src="${s.image}">
+<div class="caption">
+<h1>${s.title}</h1>
+<p>${s.text}</p>
+</div>
+`;
+
+viewer.appendChild(slide);
+}
+
+document.getElementById("next").onclick=()=>{
+
+current++;
+
+if(current>=scenes.length){
+current=0;
+}
+
+showSlide(current);
+
+};
+
+document.getElementById("prev").onclick=()=>{
+
+current--;
+
+if(current<0){
+current=scenes.length-1;
+}
+
+showSlide(current);
+
+};
+
+showSlide(0);
+
+</script>
+
+</body>
+</html>
