@@ -662,6 +662,276 @@
             }
         }
 
+
+
+        /* High-fantasy chronicle treatment: aged vellum, gilded illumination, engraved frame */
+        :root {
+            --gold: #c6a45d;
+            --light-gold: #f5df9b;
+            --paper: #e8d7ad;
+            --dark: #090b0a;
+        }
+        #chronicle {
+            background:
+                radial-gradient(ellipse at 50% 42%, #3b3425 0%, #151710 54%, #050706 100%);
+        }
+        #chronicle::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            z-index: 14;
+            pointer-events: none;
+            border: 1px solid rgba(222,190,116,.52);
+            box-shadow:
+                inset 0 0 0 4px rgba(15,18,12,.46),
+                inset 0 0 0 5px rgba(222,190,116,.19),
+                0 0 30px rgba(0,0,0,.55);
+        }
+        #chronicle::after {
+            content: "✦";
+            position: absolute;
+            z-index: 16;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(242,218,157,.8);
+            font-size: 17px;
+            text-shadow: 0 0 16px rgba(238,204,127,.65);
+            pointer-events: none;
+        }
+        .scene::after {
+            content: "";
+            position: absolute;
+            inset: 18px;
+            z-index: 7;
+            pointer-events: none;
+            opacity: .72;
+            border: 1px solid rgba(226,198,137,.18);
+            mask-image: linear-gradient(to bottom, #000 0%, transparent 23%, transparent 76%, #000 100%);
+        }
+        .vignette {
+            background:
+                radial-gradient(ellipse at center, transparent 34%, rgba(5,7,5,.38) 72%, rgba(2,3,2,.86) 100%),
+                linear-gradient(180deg, rgba(5,6,4,.2), transparent 35%, rgba(4,5,3,.2) 58%, rgba(4,5,3,.94) 100%);
+        }
+        .grain {
+            opacity: .075;
+            mix-blend-mode: soft-light;
+        }
+        .story {
+            left: max(34px, env(safe-area-inset-left));
+            right: max(34px, env(safe-area-inset-right));
+            bottom: max(62px, calc(env(safe-area-inset-bottom) + 38px));
+            max-width: 790px;
+            padding: clamp(18px, 3vw, 30px) clamp(20px, 4vw, 38px);
+            border: 1px solid rgba(220,190,125,.37);
+            background:
+                linear-gradient(110deg, rgba(13,16,11,.88), rgba(23,23,16,.76) 58%, rgba(12,15,11,.9)),
+                radial-gradient(ellipse at top left, rgba(203,164,87,.13), transparent 68%);
+            box-shadow:
+                0 18px 55px rgba(0,0,0,.48),
+                inset 0 0 0 4px rgba(218,187,119,.055),
+                inset 0 1px rgba(255,241,199,.13);
+            backdrop-filter: blur(14px) saturate(.8);
+            -webkit-backdrop-filter: blur(14px) saturate(.8);
+            clip-path: polygon(0 10px, 10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+        .story::before, .story::after {
+            content: "❧";
+            position: absolute;
+            color: rgba(226,194,124,.72);
+            font-size: 25px;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .story::before { top: 10px; left: 13px; }
+        .story::after { right: 13px; bottom: 8px; transform: rotate(180deg); }
+        .scene-number {
+            color: #e8ca82;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 11px;
+            letter-spacing: .28em;
+            text-shadow: 0 0 14px rgba(217,178,94,.35);
+        }
+        .scene-number::before, .scene-number::after {
+            width: 24px;
+            background: linear-gradient(90deg, transparent, #c6a45d);
+        }
+        .ornament {
+            width: min(190px, 48%);
+            height: 1px;
+            margin: 0 0 18px;
+            background: linear-gradient(90deg, transparent, #9c783b 12%, #f2d894 50%, #9c783b 88%, transparent);
+            box-shadow: 0 0 12px rgba(226,190,110,.36);
+        }
+        .story h1 {
+            color: #f3e5bd;
+            font-family: Georgia, "Palatino Linotype", "Book Antiqua", serif;
+            font-size: clamp(32px, 7.6vw, 61px);
+            line-height: 1.02;
+            letter-spacing: -.045em;
+            text-shadow: 0 3px 0 rgba(0,0,0,.42), 0 0 25px rgba(211,174,100,.16);
+        }
+        .story p {
+            color: #e7dcc0;
+            font-family: Georgia, "Palatino Linotype", serif;
+            font-size: clamp(15px, 3.8vw, 21px);
+            line-height: 1.55;
+            text-shadow: 0 2px 10px rgba(0,0,0,.9);
+        }
+        .toolbar button {
+            border-color: rgba(225,197,136,.42);
+            color: #f2dfad;
+            background: rgba(13,16,12,.72);
+            box-shadow: inset 0 0 0 1px rgba(255,239,198,.04), 0 6px 22px rgba(0,0,0,.42);
+        }
+        .toolbar button:hover {
+            background: rgba(133,102,49,.48);
+            border-color: rgba(245,222,165,.85);
+        }
+        .progress {
+            height: 4px;
+            background: rgba(235,218,174,.2);
+            border: 1px solid rgba(235,218,174,.16);
+        }
+        #progressBar {
+            background: linear-gradient(90deg, #71512b, #c9a65f 45%, #f8e5a9);
+            box-shadow: 0 0 15px rgba(220,183,105,.55);
+        }
+        .turning-page {
+            background:
+                linear-gradient(90deg, rgba(14,15,10,.92), rgba(180,148,83,.34) 48%, rgba(14,15,10,.94)),
+                repeating-linear-gradient(0deg, rgba(239,219,169,.035) 0 1px, transparent 1px 4px);
+            box-shadow: 25px 0 70px rgba(0,0,0,.72);
+        }
+        #loadingScreen {
+            background:
+                radial-gradient(ellipse at center, rgba(105,82,43,.42), transparent 50%),
+                radial-gradient(circle at center, #242419, #080a08 72%);
+        }
+        #loadingScreen strong {
+            font-family: Georgia, "Palatino Linotype", serif;
+            font-size: clamp(30px, 6vw, 48px);
+            letter-spacing: .04em;
+            text-shadow: 0 0 24px rgba(222,184,103,.3);
+        }
+        #loadingMessage { color: #d7c69d; font-family: Georgia, serif; }
+        @media (min-width: 850px) {
+            .story { left: 7vw; bottom: 7vh; }
+        }
+        @media (max-width: 600px) {
+            #chronicle::before { inset: 7px; }
+            .story {
+                left: 20px; right: 20px;
+                bottom: max(43px, calc(env(safe-area-inset-bottom) + 28px));
+                padding: 20px 18px 22px;
+            }
+            .story::before { top: 7px; left: 8px; }
+            .story::after { right: 8px; bottom: 6px; }
+        }
+
+        /* Cinematic polish: ambient light, depth, and staggered story reveals */
+        .scene::before {
+            content: "";
+            position: absolute;
+            inset: -15%;
+            z-index: 7;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at 50% 55%, rgba(255,225,166,.16), transparent 52%);
+            mix-blend-mode: screen;
+            transition: opacity 1.4s ease;
+        }
+        .scene.active::before { opacity: 1; animation: ambientDrift 11s ease-in-out infinite alternate; }
+
+        .scene.active .main-image {
+            animation: cinematicPush 18s cubic-bezier(.45,0,.55,1) both;
+        }
+        .scene.active .story { animation: storyArrive 1.05s cubic-bezier(.2,.75,.25,1) both; }
+        .scene.active .scene-number { animation: detailReveal .8s .18s both; }
+        .scene.active .ornament { animation: ornamentReveal 1s .32s both; transform-origin: left center; }
+        .scene.active .story h1 { animation: titleReveal 1.15s .24s cubic-bezier(.16,1,.3,1) both; }
+        .scene.active .story p { animation: copyReveal 1.1s .48s cubic-bezier(.16,1,.3,1) both; }
+
+        .story h1 {
+            text-wrap: balance;
+            filter: drop-shadow(0 5px 22px rgba(0,0,0,.25));
+        }
+        .story p { text-wrap: pretty; }
+        .scene-number { display: flex; align-items: center; gap: 10px; }
+        .scene-number::before, .scene-number::after {
+            content: "";
+            display: inline-block;
+            width: 18px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold));
+            opacity: .8;
+        }
+        .scene-number::after { transform: scaleX(-1); }
+
+        .toolbar button {
+            transition: transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+        }
+        .toolbar button:hover {
+            transform: translateY(-2px) scale(1.06);
+            border-color: rgba(255,232,175,.75);
+            box-shadow: 0 8px 25px rgba(229,196,123,.18);
+        }
+        .toolbar button:active { transform: scale(.94); }
+        .progress { box-shadow: 0 0 18px rgba(0,0,0,.3); }
+        #progressBar { position: relative; }
+        #progressBar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+            transform: translateX(-100%);
+            animation: progressSheen 2.8s ease-in-out infinite;
+        }
+        .particle { will-change: transform, opacity; }
+        .wind-line { will-change: transform, opacity; }
+
+        @keyframes cinematicPush {
+            0% { transform: scale(1.025) translate3d(0,0,0); }
+            100% { transform: scale(1.105) translate3d(-.45%, -.35%, 0); }
+        }
+        @keyframes storyArrive {
+            from { opacity: 0; transform: translate3d(0,28px,0); filter: blur(7px); }
+            to { opacity: 1; transform: translate3d(0,0,0); filter: blur(0); }
+        }
+        @keyframes detailReveal {
+            from { opacity: 0; letter-spacing: .42em; transform: translateY(8px); }
+            to { opacity: 1; letter-spacing: .23em; transform: translateY(0); }
+        }
+        @keyframes ornamentReveal {
+            from { opacity: 0; transform: scaleX(0); }
+            to { opacity: 1; transform: scaleX(1); }
+        }
+        @keyframes titleReveal {
+            from { opacity: 0; transform: translateY(24px); filter: blur(9px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes copyReveal {
+            from { opacity: 0; transform: translateY(18px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes ambientDrift {
+            from { transform: translate3d(-1.5%,1%,0) scale(.98); }
+            to { transform: translate3d(1.5%,-1%,0) scale(1.05); }
+        }
+        @keyframes progressSheen {
+            0%, 55% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .scene.active::before, .scene.active .main-image,
+            .scene.active .story, .scene.active .scene-number,
+            .scene.active .ornament, .scene.active .story h1,
+            .scene.active .story p, #progressBar::after {
+                animation: none !important;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             .main-image,
             .moving-layer,
@@ -1249,6 +1519,8 @@
         createPageTransition(direction);
 
         newElement.classList.add("active");
+        /* Restart the scene's entrance choreography on every visit. */
+        void newElement.offsetWidth;
 
         newElement
             .querySelector(".story")
