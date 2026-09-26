@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sabriela a Ondra</title>
+
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:Georgia,serif;
+}
+
+#story{
+    position:fixed;
+    inset:0;
+}
+
+.scene{
+    position:absolute;
+    inset:0;
+
+    opacity:0;
+    transition:opacity 1.2s ease;
+}
+
+.scene.active{
+    opacity:1;
+}
+
+.bg{
+    position:absolute;
+    inset:-5%;
+    width:110%;
+    height:110%;
+    object-fit:cover;
+
+    animation:kenburns 12s ease-in-out infinite alternate;
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.05),
+            rgba(0,0,0,0.35)
+        );
+}
+
+.text{
+    position:absolute;
+    left:40px;
+    right:40px;
+    bottom:50px;
+
+    color:white;
+    text-shadow:0 2px 10px #000;
+}
+
+h1{
+    margin:0 0 10px 0;
+    font-size:48px;
+}
+
+p{
+    margin:0;
+    font-size:24px;
+    line-height:1.5;
+}
+
+.snow{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.flake{
+    position:absolute;
+    background:white;
+    border-radius:50%;
+    opacity:.7;
+
+    animation:snowfall linear infinite;
+}
+
+.controls{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:100;
+}
+
+button{
+    padding:12px 18px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+@keyframes kenburns{
+    from{
+        transform:scale(1.03) translate(0,0);
+    }
+    to{
+        transform:scale(1.12) translate(1%,-1%);
+    }
+}
+
+@keyframes snowfall{
+    from{
+        transform:translateY(-50px);
+    }
+    to{
+        transform:translateY(110vh);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+    <button onclick="prevScene()">◀</button>
+    <button onclick="nextScene()">▶</button>
+    <button onclick="toggleAuto()">Auto</button>
+</div>
+
+<div id="story"></div>
+
+<script>
+
+const scenes = [
+
+{
+image:"01_kralovstvi.jpg",
+title:"Království v údolí",
+text:"Sabriela žila v maličkém království mezi horskými vrcholy."
+},
+
+{
+image:"02_ledova_bariera.jpg",
+title:"Ledová bariéra",
+text:"Jednoho dne obklopil království neproniknutelný ledovec."
+},
+
+{
+image:"03_dopis.jpg",
+title:"Horský vítr",
+text:"Sabriela poslala své přání po horském větru."
+},
+
+{
+image:"04_ondra_okno.jpg",
+title:"Princ Ondra",
+text:"V jiném království spatřil Ondra přilétající dopis."
+},
+
+{
+image:"05_volani_lasky.jpg",
+title:"Výprava",
+text:"Ondra se vydal hledat tajemnou princeznu."
+},
+
+{
+image:"06_cesta.jpg",
+title:"Ledová stezka",
+text:"Oba se vydali vstříc nebezpečné cestě skrz ledovec."
+},
+
+{
+image:"07_troll.jpg",
+title:"Sněžný troll",
+text:"Sabriela musela porazit mocného sněžného trolla."
+},
+
+{
+image:"08_setkani.jpg",
+title:"Shledání",
+text:"Uprostřed bouře se konečně našli."
+},
+
+{
+image:"09_navrat.jpg",
+title:"Návrat",
+text:"Ledová bariéra se začala rozpadat."
+},
+
+{
+image:"10_svatba.jpg",
+title:"Šťastný konec",
+text:"Celé království slavilo svatbu Sabriely a Ondry."
+}
+
+];
+
+let current=0;
+let auto=false;
+let timer=null;
+
+const story=document.getElementById("story");
+
+function renderScene(index){
+
+story.innerHTML="";
+
+const scene=scenes[index];
+
+const el=document.createElement("div");
+el.className="scene active";
+
+el.innerHTML=`
+<img class="bg" src="${scene.image}">
+<div class="overlay"></div>
+
+<div class="snow"></div>
+
+<div class="text">
+<h1>${scene.title}</h1>
+<p>${scene.text}</p>
+</div>
+`;
+
+story.appendChild(el);
+
+const snow=el.querySelector(".snow");
+
+for(let i=0;i<45;i++){
+
+const f=document.createElement("div");
+
+f.className="flake";
+
+const size=Math.random()*4+2;
+
+f.style.width=size+"px";
+f.style.height=size+"px";
+f.style.left=Math.random()*100+"%";
+
+f.style.animationDuration=
+(Math.random()*6+6)+"s";
+
+f.style.animationDelay=
+Math.random()*6+"s";
+
+snow.appendChild(f);
+}
+
+}
+
+function nextScene(){
+
+current++;
+
+if(current>=scenes.length){
+current=0;
+}
+
+renderScene(current);
+
+}
+
+function prevScene(){
+
+current--;
+
+if(current<0){
+current=scenes.length-1;
+}
+
+renderScene(current);
+
+}
+
+function toggleAuto(){
+
+auto=!auto;
+
+if(auto){
+
+timer=setInterval(
+nextScene,
+7000
+);
+
+}else{
+
+clearInterval(timer);
+
+}
+
+}
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.key==="ArrowRight") nextScene();
+if(e.key==="ArrowLeft") prevScene();
+
+});
+
+renderScene(0);
+
+</script>
+
+</body>
+</html>
